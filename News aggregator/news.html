@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Aggregator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        #searchInput {
+            width: 70%;
+            padding: 10px;
+            margin: 20px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        #newsContainer {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .newsItem {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .newsItem img {
+            max-width: 100%;
+            border-radius: 5px;
+        }
+
+        .newsItem h3 {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        .newsItem p {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .newsItem a {
+            text-decoration: none;
+            color: #007BFF;
+            font-weight: bold;
+        }
+
+        .newsItem a:hover {
+            text-decoration: underline;
+        }
+
+        #notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #007BFF;
+            color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Centralized News Collection</h1>
+        <input type="text" id="searchInput" placeholder="Search for news..">
+        <button onclick="fetchNews()">Search</button>
+    </header>
+
+    <div id="newsContainer"></div>
+    <div id="notification">Breaking News! Stay Updated.</div>
+
+    <script>
+        const apiKey = 'c546d9b3a3da439fa0916ba3509119f2';
+
+        async function fetchNews() {
+            const query = document.getElementById('searchInput').value;
+            const url = `https://newsapi.org/v2/everything?q=${query}&apiKey=${apiKey}`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                displayNews(data.articles);
+            } catch (error) {
+                console.error('Error fetching news:', error);
+            }
+        }
+
+        function displayNews(articles) {
+            const newsContainer = document.getElementById('newsContainer');
+            newsContainer.innerHTML = '';
+
+            articles.forEach(article => {
+                const newsItem = document.createElement('div');
+                newsItem.classList.add('newsItem');
+
+                newsItem.innerHTML = `
+                    <h3>${article.title}</h3>
+                    <img src="${article.urlToImage}" alt="News Image">
+                    <p>${article.description}</p>
+                    <a href="${article.url}" target="_blank">Read more</a>
+                    <button onclick="bookmarkArticle('${article.url}')">Bookmark</button>
+                    <button onclick="shareArticle('${article.url}')">Share</button>
+                `;
+
+                newsContainer.appendChild(newsItem);
+            });
+        }
+
+        function bookmarkArticle(url) {
+            alert(`Article bookmarked! URL: ${url}`);
+        }
+
+        function shareArticle(url) {
+            alert(`Article shared! URL: ${url}`);
+        }
+
+        // Simulating real-time updates with push notifications
+        function showNotification() {
+            const notification = document.getElementById('notification');
+            notification.style.display = 'block';
+
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 5000);
+        }
+
+        setInterval(showNotification, 30000); // Show notification every 30 seconds
+    </script>
+
+</body>
+</html>
+
+
